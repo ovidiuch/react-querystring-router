@@ -1,5 +1,5 @@
 var _ = require('lodash'),
-    serialize = require('./serialize.js');
+    uri = require('./uri.js');
 
 var Router = function(options) {
   this._options = _.extend({
@@ -12,7 +12,7 @@ var Router = function(options) {
   this._bindPopStateEvent();
 
   // The initial render is done instantly when the Router instance is created
-  this._loadParams(serialize.parseLocation(this._getCurrentLocation()));
+  this._loadParams(uri.parseLocation(this._getCurrentLocation()));
 };
 
 Router.prototype = {
@@ -44,7 +44,7 @@ Router.prototype = {
     }
 
     var location = this._getCurrentLocation(),
-        params = serialize.parseLocation(location);
+        params = uri.parseLocation(location);
 
     this._loadParams(params, location);
   },
@@ -59,7 +59,7 @@ Router.prototype = {
     // Create a history entry for the new component
     this._pushHistoryState({}, location);
 
-    this._loadParams(serialize.parseLocation(location));
+    this._loadParams(uri.parseLocation(location));
   },
 
   _loadParams: function(params) {

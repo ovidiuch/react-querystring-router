@@ -3,7 +3,7 @@ var _ = require('lodash'),
     expect = chai.expect,
     sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
-    serialize = require('../src/serialize.js'),
+    uri = require('../src/uri.js'),
     Router = require('../src/router.js');
 
 chai.use(sinonChai);
@@ -34,7 +34,7 @@ describe('Router class', function() {
       }
     };
 
-    sinon.stub(serialize, 'parseLocation', function() {
+    sinon.stub(uri, 'parseLocation', function() {
       return uriParams;
     });
 
@@ -52,7 +52,7 @@ describe('Router class', function() {
   });
 
   afterEach(function() {
-    serialize.parseLocation.restore();
+    uri.parseLocation.restore();
 
     Router.prototype._getCurrentLocation.restore();
     Router.prototype._isPushStateSupported.restore();
@@ -74,7 +74,7 @@ describe('Router class', function() {
     it('should unserialize current URL', function() {
       createRouter();
 
-      expect(serialize.parseLocation).to.have.been.calledWith(location);
+      expect(uri.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should render using URL params as props', function() {
@@ -155,7 +155,7 @@ describe('Router class', function() {
 
       routerInstance.goTo(location);
 
-      expect(serialize.parseLocation).to.have.been.calledWith(location);
+      expect(uri.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should render using new URL params as props', function() {
@@ -237,7 +237,7 @@ describe('Router class', function() {
     it('should unserialize current URL', function() {
       createRouter();
 
-      expect(serialize.parseLocation).to.have.been.calledWith(location);
+      expect(uri.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should extend default props', function() {

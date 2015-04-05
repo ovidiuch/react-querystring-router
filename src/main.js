@@ -1,4 +1,4 @@
 module.exports = {
-  serialize: require('./serialize.js'),
+  uri: require('./uri.js'),
   Router: require('./router.js')
 };
