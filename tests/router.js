@@ -14,11 +14,10 @@ describe('Router class', function() {
         return componentInstance;
       });
 
-  var queryString,
-      routerOptions,
+  var routerOptions,
       routerInstance,
-      queryString,
-      propsFromQueryString;
+      location,
+      uriParams;
 
   function createRouter(extraOptions) {
     routerInstance = new Router(_.merge(routerOptions, extraOptions));
@@ -26,20 +25,22 @@ describe('Router class', function() {
 
   beforeEach(function() {
     // Allow query string to be overridden before tests
-    queryString = 'mypage.com?component=List&dataUrl=users.json';
+    location = 'mypage.com?component=List&dataUrl=users.json';
 
-    propsFromQueryString = {
+    uriParams = {
       component: 'List',
-      dataUrl: 'users.json'
+      props: {
+        dataUrl: 'users.json'
+      }
     };
 
-    sinon.stub(serialize, 'getPropsFromQueryString', function() {
-      return propsFromQueryString;
+    sinon.stub(serialize, 'parseLocation', function() {
+      return uriParams;
     });
 
     // Ignore window API
     sinon.stub(Router.prototype, '_getCurrentLocation', function() {
-      return queryString;
+      return location;
     });
     sinon.stub(Router.prototype, '_isPushStateSupported').returns(true);
     sinon.stub(Router.prototype, '_bindPopStateEvent');
@@ -51,7 +52,7 @@ describe('Router class', function() {
   });
 
   afterEach(function() {
-    serialize.getPropsFromQueryString.restore();
+    serialize.parseLocation.restore();
 
     Router.prototype._getCurrentLocation.restore();
     Router.prototype._isPushStateSupported.restore();
@@ -73,28 +74,24 @@ describe('Router class', function() {
     it('should unserialize current URL', function() {
       createRouter();
 
-      expect(serialize.getPropsFromQueryString).to.have.been.calledWith(
-          'mypage.com?component=List&dataUrl=users.json');
+      expect(serialize.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should render using URL params as props', function() {
       createRouter();
 
       var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('List');
       expect(propsSent.dataUrl).to.equal('users.json');
     });
 
     it('should extend default props', function() {
       createRouter({
         defaultProps: {
-          component: 'DefaultComponent',
           defaultProp: true
         }
       });
 
       var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('List');
       expect(propsSent.dataUrl).to.equal('users.json');
       expect(propsSent.defaultProp).to.equal(true);
     });
@@ -121,44 +118,34 @@ describe('Router class', function() {
       expect(routerInstance.rootComponent).to.equal(componentInstance);
     });
 
-    it('should call onChange callback', function() {
+    it('should call onChange callback with params', function() {
       var onChangeSpy = sinon.spy();
       createRouter({
         onChange: onChangeSpy
       });
 
       var propsSent = onChangeSpy.lastCall.args[0];
-
       expect(propsSent.component).to.equal('List');
-      expect(propsSent.dataUrl).to.equal('users.json');
+      expect(propsSent.props.dataUrl).to.equal('users.json');
     });
   });
 
   describe('.goTo method', function() {
     beforeEach(function() {
-      queryString = 'mypage.com?component=User&dataUrl=user.json';
+      location = 'mypage.com?component=User&dataUrl=user.json';
 
-      propsFromQueryString = {
+      uriParams = {
         component: 'User',
-        dataUrl: 'user.json'
-      };
-
-      // Fake the API of the ComponentTree mixin
-      componentInstance = {
-        serialize: sinon.stub().returns({
-          component: 'List',
-          dataUrl: 'users.json',
-          state: {
-            somethingHappened: true
-          }
-        })
+        props: {
+          dataUrl: 'user.json'
+        }
       };
     });
 
     it('should check if pushState is supported', function() {
       createRouter();
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       expect(routerInstance._isPushStateSupported).to.have.been.called;
     });
@@ -166,35 +153,30 @@ describe('Router class', function() {
     it('should unserialize new URL query string', function() {
       createRouter();
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
-      expect(serialize.getPropsFromQueryString)
-          .to.have.been.calledWith(
-              'mypage.com?component=User&dataUrl=user.json');
+      expect(serialize.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should render using new URL params as props', function() {
       createRouter();
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('User');
       expect(propsSent.dataUrl).to.equal('user.json');
     });
 
     it('should extend default props', function() {
       createRouter({
         defaultProps: {
-          component: 'DefaultComponent',
           defaultProp: true
         }
       });
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('User');
       expect(propsSent.dataUrl).to.equal('user.json');
       expect(propsSent.defaultProp).to.equal(true);
     });
@@ -202,7 +184,7 @@ describe('Router class', function() {
     it('should attach router reference to props', function() {
       createRouter();
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       var propsSent = onRenderSpy.lastCall.args[0];
       expect(propsSent.router).to.equal(routerInstance);
@@ -211,52 +193,13 @@ describe('Router class', function() {
     it('should push new entry to browser history', function() {
       createRouter();
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       // It's a bit difficult to mock the native functions so we mocked the
       // private methods that wrap those calls
-      expect(routerInstance._pushHistoryState).to.have.been.called;
-    });
-
-    it('should generate snapshot of previous component', function() {
-      createRouter();
-
-      routerInstance.goTo(queryString);
-
-      expect(componentInstance.serialize).to.have.been.called;
-    });
-
-    it('should update browser history with state for previous component',
-       function() {
-      createRouter();
-
-      routerInstance.goTo(queryString);
-
-      // It's a bit difficult to mock the native functions so we mocked the
-      // private methods that wrap those calls
-      var stateSent = routerInstance._replaceHistoryState.lastCall.args[0];
-      expect(stateSent.somethingHappened).to.equal(true);
-    });
-
-    it('should omit unserializable fields for browser state', function() {
-      componentInstance.serialize.returns({
-        component: 'List',
-        dataUrl: 'users.json',
-        state: {
-          somethingHappened: true,
-          somethingElseHappened: true,
-          somethingUgly: function() {}
-        }
-      });
-
-      createRouter();
-
-      routerInstance.goTo(queryString);
-
-      var stateSent = routerInstance._replaceHistoryState.lastCall.args[0];
-      expect(stateSent.somethingHappened).to.equal(true);
-      expect(stateSent.somethingElseHappened).to.equal(true);
-      expect(stateSent.somethingUgly).to.equal(undefined);
+      //expect(routerInstance._pushHistoryState).to.have.been.called;
+      expect(routerInstance._pushHistoryState.lastCall.args[1])
+          .to.equal(location);
     });
 
     it('should call onChange callback', function() {
@@ -265,21 +208,23 @@ describe('Router class', function() {
         onChange: onChangeSpy
       });
 
-      routerInstance.goTo(queryString);
+      routerInstance.goTo(location);
 
       var propsSent = onChangeSpy.lastCall.args[0];
       expect(propsSent.component).to.equal('User');
-      expect(propsSent.dataUrl).to.equal('user.json');
+      expect(propsSent.props.dataUrl).to.equal('user.json');
     });
   });
 
   describe('.PopState event', function() {
     beforeEach(function() {
-      queryString = 'mypage.com?component=User&dataUrl=user.json';
+      location = 'mypage.com?component=User&dataUrl=user.json';
 
-      propsFromQueryString = {
+      uriParams = {
         component: 'User',
-        dataUrl: 'user.json'
+        props: {
+          dataUrl: 'user.json'
+        }
       };
     });
 
@@ -292,29 +237,12 @@ describe('Router class', function() {
     it('should unserialize current URL', function() {
       createRouter();
 
-      expect(serialize.getPropsFromQueryString).to.have.been.calledWith(
-          'mypage.com?component=User&dataUrl=user.json');
-    });
-
-    it('should use state from event state', function() {
-      createRouter();
-
-      routerInstance.onPopState({
-        state: {
-          somethingHappened: true
-        }
-      });
-
-      var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('User');
-      expect(propsSent.dataUrl).to.equal('user.json');
-      expect(propsSent.state.somethingHappened).to.equal(true);
+      expect(serialize.parseLocation).to.have.been.calledWith(location);
     });
 
     it('should extend default props', function() {
       createRouter({
         defaultProps: {
-          component: 'DefaultComponent',
           defaultProp: true
         }
       });
@@ -324,7 +252,6 @@ describe('Router class', function() {
       });
 
       var propsSent = onRenderSpy.lastCall.args[0];
-      expect(propsSent.component).to.equal('User');
       expect(propsSent.dataUrl).to.equal('user.json');
       expect(propsSent.defaultProp).to.equal(true);
     });
@@ -352,7 +279,7 @@ describe('Router class', function() {
 
       var propsSent = onChangeSpy.lastCall.args[0];
       expect(propsSent.component).to.equal('User');
-      expect(propsSent.dataUrl).to.equal('user.json');
+      expect(propsSent.props.dataUrl).to.equal('user.json');
     });
   });
 });

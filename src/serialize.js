@@ -1,10 +1,10 @@
 module.exports = {
-  getPropsFromQueryString: function(location) {
+  parseLocation: function(location) {
     var queryString = location.split('?').pop(),
-        props = {};
+        params = {};
 
     if (!queryString.length) {
-      return props;
+      return params;
     }
 
     var pairs = queryString.split('&'),
@@ -24,32 +24,29 @@ module.exports = {
         // keep its original value
       }
 
-      props[key] = value;
+      params[key] = value;
     }
 
-    return props;
+    return params;
   },
 
-  getQueryStringFromProps: function(props) {
+  stringifyParams: function(params) {
     /**
-     * Serializes a props object into a browser-complient URL. The URL
-     * generated can be simply put inside the href attribute of an <a> tag, and
-     * can be combined with the serialize method of the ComponentTree Mixin to
-     * create a link that opens the current Component at root level
-     * (full window.)
+     * Serializes JSON params into a browser-complient URL. The URL
+     * generated can be simply put inside the href attribute of an <a> tag
      */
     var parts = [],
         value;
 
-    for (var key in props) {
-      value = props[key];
+    for (var key in params) {
+      value = params[key];
 
       // Objects can be embedded in a query string as well
       if (typeof value == 'object') {
         try {
           value = JSON.stringify(value);
         } catch (e) {
-          // Props that can't be stringified should be ignored
+          // Params that can't be stringified should be ignored
           continue;
         }
       }
