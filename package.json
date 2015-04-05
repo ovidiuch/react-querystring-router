@@ -1,0 +1,20 @@
+{
+  "name": "react-minimal-router",
+  "version": "0.1.0",
+  "description": "Bare router for React components, using props as query string",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "mocha tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/skidding/react-minimal-router.git"
+  },
+  "devDependencies": {
+    "chai": "^2.2.0",
+    "lodash": "^3.6.0",
+    "mocha": "^2.2.1",
+    "sinon": "^1.14.1",
+    "sinon-chai": "^2.7.0"
+  }
+}
