@@ -30,11 +30,11 @@ Router.prototype = {
      */
     event.preventDefault();
 
-    this._loadLocation(event.currentTarget.href);
+    this._pushLocation(event.currentTarget.href);
   },
 
   goTo: function(location) {
-    this._loadLocation(location);
+    this._pushLocation(location);
   },
 
   onPopState: function(e) {
@@ -50,7 +50,7 @@ Router.prototype = {
     this._loadParams(params, location);
   },
 
-  _loadLocation: function(location) {
+  _pushLocation: function(location) {
     // Old-school refreshes are made when pushState isn't supported
     if (!this._isPushStateSupported()) {
       window.location = location;
@@ -94,7 +94,7 @@ Router.prototype = {
   _unbindPopStateEvent: function() {
     window.removeEventListener('popstate', this.onPopState);
   },
-  
+
   _pushHistoryState: function(state, url) {
     window.history.pushState(state, '', url);
   },
