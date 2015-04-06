@@ -37,17 +37,16 @@ describe('Router class', function() {
 
   var genericTests = function() {
     it('should unserialize location', function() {
-      expect(uri.parseLocation).to.have.been.calledWith(location);
+      expect(uri.parseLocation.lastCall.args[0]).to.equal(location);
     });
 
     it('should call getComponentClass with name', function() {
-      expect(routerOptions.getComponentClass)
-            .to.have.been.calledWith(uriParams.component);
+      expect(routerOptions.getComponentClass.lastCall.args[0])
+            .to.equal(uriParams.component);
     });
 
     it('should call createElement with returned class', function() {
-      expect(React.createElement)
-            .to.have.been.calledWith(ComponentClass);
+      expect(React.createElement.lastCall.args[0]).to.equal(ComponentClass);
     });
 
     it('should render using URL params as props', function() {
@@ -81,6 +80,26 @@ describe('Router class', function() {
     });
   };
 
+  var currentLocationTests = function() {
+    it('should get current location', function() {
+      expect(routerInstance._getCurrentLocation).to.have.been.called;
+    });
+  };
+
+  var pushLocationTests = function() {
+    it('should check if pushState is supported', function() {
+      expect(routerInstance._isPushStateSupported).to.have.been.called;
+    });
+
+    it('should push new entry to browser history', function() {
+      // It's a bit difficult to mock the native functions so we mocked the
+      // private methods that wrap those calls
+      //expect(routerInstance._pushHistoryState).to.have.been.called;
+      expect(routerInstance._pushHistoryState.lastCall.args[1])
+          .to.equal(location);
+    });
+  };
+
   beforeEach(function() {
     stubWindowApi();
 
@@ -93,6 +112,16 @@ describe('Router class', function() {
       return componentInstance;
     });
 
+    // Fake browser location and mock (already tested) uri.js lib
+    location = 'mypage.com?component=List&dataUrl=users.json';
+
+    uriParams = {
+      component: 'List',
+      props: {
+        dataUrl: 'users.json'
+      }
+    };
+
     routerOptions = {
       defaultProps: {
         defaultProp: true
@@ -101,6 +130,8 @@ describe('Router class', function() {
       getComponentClass: sinon.stub().returns(ComponentClass),
       onChange: sinon.spy()
     };
+
+    routerInstance = new Router(routerOptions);
   });
 
   afterEach(function() {
@@ -112,28 +143,12 @@ describe('Router class', function() {
     React.render.restore();
   });
 
-  describe('new instance', function() {
-    beforeEach(function() {
-      location = 'mypage.com?component=List&dataUrl=users.json';
-
-      uriParams = {
-        component: 'List',
-        props: {
-          dataUrl: 'users.json'
-        }
-      };
-
-      routerInstance = new Router(routerOptions);
-    });
-
+  describe('initial location', function() {
+    currentLocationTests();
     genericTests();
-
-    it('should get current location', function() {
-      expect(routerInstance._getCurrentLocation).to.have.been.called;
-    });
   });
 
-  describe('.goTo method', function() {
+  describe('changing location', function() {
     beforeEach(function() {
       location = 'mypage.com?component=User&dataUrl=user.json';
 
@@ -143,47 +158,40 @@ describe('Router class', function() {
           dataUrl: 'user.json'
         }
       };
-
-      routerInstance = new Router(routerOptions);
-      routerInstance.goTo(location);
     });
 
-    genericTests();
-
-    it('should check if pushState is supported', function() {
-      expect(routerInstance._isPushStateSupported).to.have.been.called;
-    });
-
-    it('should push new entry to browser history', function() {
-      // It's a bit difficult to mock the native functions so we mocked the
-      // private methods that wrap those calls
-      //expect(routerInstance._pushHistoryState).to.have.been.called;
-      expect(routerInstance._pushHistoryState.lastCall.args[1])
-          .to.equal(location);
-    });
-  });
-
-  describe('.PopState event', function() {
-    beforeEach(function() {
-      location = 'mypage.com?component=User&dataUrl=user.json';
-
-      uriParams = {
-        component: 'User',
-        props: {
-          dataUrl: 'user.json'
-        }
-      };
-
-      routerInstance = new Router(routerOptions);
-      routerInstance.onPopState({
-        state: {}
+    describe('.goTo method', function() {
+      beforeEach(function() {
+        routerInstance.goTo(location);
       });
+
+      pushLocationTests();
+      genericTests();
     });
 
-    genericTests();
+    describe('.routeLink method', function() {
+      beforeEach(function() {
+        routerInstance.routeLink({
+          preventDefault: function() {},
+          currentTarget: {
+            href: location
+          }
+        });
+      });
 
-    it('should get current location', function() {
-      expect(routerInstance._getCurrentLocation).to.have.been.called;
+      pushLocationTests();
+      genericTests();
+    });
+
+    describe('.PopState event', function() {
+      beforeEach(function() {
+        routerInstance.onPopState({
+          state: {}
+        });
+      });
+
+      currentLocationTests();
+      genericTests();
     });
   });
 });
