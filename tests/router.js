@@ -1,4 +1,5 @@
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     chai = require('chai'),
     expect = chai.expect,
     sinon = require('sinon'),
@@ -9,10 +10,8 @@ var _ = require('lodash'),
 chai.use(sinonChai);
 
 describe('Router class', function() {
-  var componentInstance = {},
-      onRenderSpy = sinon.spy(function() {
-        return componentInstance;
-      }),
+  var ComponentClass = {},
+      componentInstance = {},
       routerOptions,
       routerInstance,
       location,
@@ -25,7 +24,6 @@ describe('Router class', function() {
     sinon.stub(Router.prototype, '_isPushStateSupported').returns(true);
     sinon.stub(Router.prototype, '_bindPopStateEvent');
     sinon.stub(Router.prototype, '_unbindPopStateEvent');
-    sinon.stub(Router.prototype, '_replaceHistoryState');
     sinon.stub(Router.prototype, '_pushHistoryState');
   };
 
@@ -34,7 +32,6 @@ describe('Router class', function() {
     Router.prototype._isPushStateSupported.restore();
     Router.prototype._bindPopStateEvent.restore();
     Router.prototype._unbindPopStateEvent.restore();
-    Router.prototype._replaceHistoryState.restore();
     Router.prototype._pushHistoryState.restore();
   };
 
@@ -43,23 +40,34 @@ describe('Router class', function() {
       expect(uri.parseLocation).to.have.been.calledWith(location);
     });
 
-    it('should attach router reference to props', function() {
-      expect(onRenderSpy.lastCall.args[0].router).to.equal(routerInstance);
+    it('should call getComponentClass with name', function() {
+      expect(routerOptions.getComponentClass)
+            .to.have.been.calledWith(uriParams.component);
     });
 
-    it('should use container node received in options', function() {
-      expect(onRenderSpy.lastCall.args[1]).to.equal('<fake DOM element>');
+    it('should call createElement with returned class', function() {
+      expect(React.createElement)
+            .to.have.been.calledWith(ComponentClass);
     });
 
     it('should render using URL params as props', function() {
-      var propsSent = onRenderSpy.lastCall.args[0];
+      var propsSent = React.createElement.lastCall.args[1];
       expect(propsSent.dataUrl).to.equal(uriParams.props.dataUrl);
     });
 
+    it('should attach router reference to props', function() {
+      expect(React.createElement.lastCall.args[1].router)
+            .to.equal(routerInstance);
+    });
+
     it('should extend default props', function() {
-      var props = onRenderSpy.lastCall.args[0];
+      var props = React.createElement.lastCall.args[1];
       expect(props.dataUrl).to.equal(uriParams.props.dataUrl);
       expect(props.defaultProp).to.equal(true);
+    });
+
+    it('should use container node received in options', function() {
+      expect(React.render.lastCall.args[1]).to.equal('<fake DOM element>');
     });
 
     it('should expose reference to root component', function() {
@@ -80,12 +88,17 @@ describe('Router class', function() {
       return uriParams;
     });
 
+    sinon.stub(React, 'createElement');
+    sinon.stub(React, 'render', function() {
+      return componentInstance;
+    });
+
     routerOptions = {
       defaultProps: {
         defaultProp: true
       },
       container: '<fake DOM element>',
-      onRender: onRenderSpy,
+      getComponentClass: sinon.stub().returns(ComponentClass),
       onChange: sinon.spy()
     };
   });
@@ -95,7 +108,8 @@ describe('Router class', function() {
 
     uri.parseLocation.restore();
 
-    onRenderSpy.reset();
+    React.createElement.restore();
+    React.render.restore();
   });
 
   describe('new instance', function() {

@@ -1,4 +1,5 @@
-var _ = require('lodash'),
+var React = require('react'),
+    _ = require('lodash'),
     uri = require('./uri.js');
 
 var Router = function(options) {
@@ -70,9 +71,12 @@ Router.prototype = {
       router: this
     }, this._options.defaultProps, params.props);
 
+    var ComponentClass = this._options.getComponentClass(params.component),
+        componentElement = React.createElement(ComponentClass, props);
+
     // The router exposes the instance of the currently rendered component
-    this.rootComponent = this._options.onRender(props,
-                                                this._options.container);
+    this.rootComponent = React.render(componentElement,
+                                      this._options.container);
 
     if (_.isFunction(this._options.onChange)) {
       this._options.onChange.call(this, params);
@@ -90,11 +94,7 @@ Router.prototype = {
   _unbindPopStateEvent: function() {
     window.removeEventListener('popstate', this.onPopState);
   },
-
-  _replaceHistoryState: function(state, url) {
-    window.history.replaceState(state, '', url);
-  },
-
+  
   _pushHistoryState: function(state, url) {
     window.history.pushState(state, '', url);
   },
