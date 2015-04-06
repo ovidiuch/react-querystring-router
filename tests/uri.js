@@ -4,24 +4,22 @@ var chai = require('chai'),
 
 describe('uri lib', function() {
   it('should parse stringified and encoded props from location', function() {
-    location = 'mypage.com?component=List&' +
-               'props=%7B%22dataUrl%22%3A%22users.json%22%7D';
+    location = 'mypage.com?name=Jack&info=%7B%22age%22%3A25%7D';
     params = uri.parseLocation(location);
 
-    expect(params.component).to.equal('List');
-    expect(params.props.dataUrl).to.equal('users.json');
+    expect(params.name).to.equal('Jack');
+    expect(params.info.age).to.equal(25);
   });
 
   it('should generate location with query string from params', function() {
     var params = {
-      component: 'List',
-      props: {
-        dataUrl: 'users.json'
+      name: 'Jack',
+      info: {
+        age: 25
       }
     };
 
     expect(uri.stringifyParams(params)).
-        to.equal('?component=List&' +
-                 'props=%7B%22dataUrl%22%3A%22users.json%22%7D');
+        to.equal('?name=Jack&info=%7B%22age%22%3A25%7D');
   });
 });

@@ -51,7 +51,12 @@ describe('Router class', function() {
 
     it('should render using URL params as props', function() {
       var propsSent = React.createElement.lastCall.args[1];
-      expect(propsSent.dataUrl).to.equal(uriParams.props.dataUrl);
+      expect(propsSent.dataUrl).to.equal(uriParams.dataUrl);
+    });
+
+    it('should omit component param in props', function() {
+      var propsSent = React.createElement.lastCall.args[1];
+      expect(propsSent.component).to.be.undefined;
     });
 
     it('should attach router reference to props', function() {
@@ -61,7 +66,7 @@ describe('Router class', function() {
 
     it('should extend default props', function() {
       var props = React.createElement.lastCall.args[1];
-      expect(props.dataUrl).to.equal(uriParams.props.dataUrl);
+      expect(props.dataUrl).to.equal(uriParams.dataUrl);
       expect(props.defaultProp).to.equal(true);
     });
 
@@ -76,7 +81,7 @@ describe('Router class', function() {
     it('should call onChange callback with params', function() {
       var params = routerOptions.onChange.lastCall.args[0];
       expect(params.component).to.equal(uriParams.component);
-      expect(params.props.dataUrl).to.equal(uriParams.props.dataUrl);
+      expect(params.dataUrl).to.equal(uriParams.dataUrl);
     });
   };
 
@@ -117,9 +122,7 @@ describe('Router class', function() {
 
     uriParams = {
       component: 'List',
-      props: {
-        dataUrl: 'users.json'
-      }
+      dataUrl: 'users.json'
     };
 
     routerOptions = {
@@ -154,9 +157,7 @@ describe('Router class', function() {
 
       uriParams = {
         component: 'User',
-        props: {
-          dataUrl: 'user.json'
-        }
+        dataUrl: 'user.json'
       };
     });
 

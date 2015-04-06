@@ -69,7 +69,7 @@ Router.prototype = {
       // possible for a component to change the page through the router and
       // not have to rely on any sort of globals
       router: this
-    }, this._options.defaultProps, params.props);
+    }, this._options.defaultProps, _.omit(params, 'component'));
 
     var ComponentClass = this._options.getComponentClass(params.component),
         componentElement = React.createElement(ComponentClass, props);
