@@ -1,4 +1,4 @@
-# react-minimal-router [![Build Status](https://travis-ci.org/skidding/react-minimal-router.svg?branch=master)](https://travis-ci.org/skidding/react-minimal-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-minimal-router/badge.svg)](https://coveralls.io/r/skidding/react-minimal-router)
+# react-minimal-router [![Build Status](https://travis-ci.org/skidding/react-minimal-router.svg?branch=master)](https://travis-ci.org/skidding/react-minimal-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-minimal-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-minimal-router?branch=master)
 Bare router for React components, using query string as props.
 
 ```
