@@ -1,13 +1,7 @@
 var React = require('react'),
     _ = require('lodash'),
-    chai = require('chai'),
-    expect = chai.expect,
-    sinon = require('sinon'),
-    sinonChai = require('sinon-chai'),
     uri = require('../src/uri.js'),
     Router = require('../src/router.js');
-
-chai.use(sinonChai);
 
 describe('Router class', function() {
   var ComponentClass = {},

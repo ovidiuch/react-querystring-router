@@ -1,6 +1,4 @@
-var chai = require('chai'),
-    expect = chai.expect,
-    uri = require('../src/uri.js');
+var uri = require('../src/uri.js');
 
 describe('uri lib', function() {
   it('should parse stringified and encoded props from location', function() {
