@@ -1,25 +1,19 @@
 var React = require('react'),
     _ = require('lodash'),
-    chai = require('chai'),
-    expect = chai.expect,
-    sinon = require('sinon'),
-    sinonChai = require('sinon-chai'),
     uri = require('../src/uri.js'),
     Router = require('../src/router.js');
-
-chai.use(sinonChai);
 
 describe('Router class', function() {
   var ComponentClass = {},
       componentInstance = {},
       routerOptions,
       routerInstance,
-      location,
+      uriLocation,
       uriParams;
 
   var stubWindowApi = function() {
     sinon.stub(Router.prototype, '_getCurrentLocation', function() {
-      return location;
+      return uriLocation;
     });
     sinon.stub(Router.prototype, '_isPushStateSupported').returns(true);
     sinon.stub(Router.prototype, '_bindPopStateEvent');
@@ -37,7 +31,7 @@ describe('Router class', function() {
 
   var genericTests = function() {
     it('should unserialize location', function() {
-      expect(uri.parseLocation.lastCall.args[0]).to.equal(location);
+      expect(uri.parseLocation.lastCall.args[0]).to.equal(uriLocation);
     });
 
     it('should call getComponentClass with name', function() {
@@ -101,7 +95,7 @@ describe('Router class', function() {
       // private methods that wrap those calls
       //expect(routerInstance._pushHistoryState).to.have.been.called;
       expect(routerInstance._pushHistoryState.lastCall.args[1])
-          .to.equal(location);
+          .to.equal(uriLocation);
     });
   };
 
@@ -118,7 +112,7 @@ describe('Router class', function() {
     });
 
     // Fake browser location and mock (already tested) uri.js lib
-    location = 'mypage.com?component=List&dataUrl=users.json';
+    uriLocation = 'mypage.com?component=List&dataUrl=users.json';
 
     uriParams = {
       component: 'List',
@@ -153,7 +147,7 @@ describe('Router class', function() {
 
   describe('changing location', function() {
     beforeEach(function() {
-      location = 'mypage.com?component=User&dataUrl=user.json';
+      uriLocation = 'mypage.com?component=User&dataUrl=user.json';
 
       uriParams = {
         component: 'User',
@@ -163,7 +157,7 @@ describe('Router class', function() {
 
     describe('.goTo method', function() {
       beforeEach(function() {
-        routerInstance.goTo(location);
+        routerInstance.goTo(uriLocation);
       });
 
       pushLocationTests();
@@ -175,7 +169,7 @@ describe('Router class', function() {
         routerInstance.routeLink({
           preventDefault: function() {},
           currentTarget: {
-            href: location
+            href: uriLocation
           }
         });
       });

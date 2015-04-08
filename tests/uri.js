@@ -1,11 +1,9 @@
-var chai = require('chai'),
-    expect = chai.expect,
-    uri = require('../src/uri.js');
+var uri = require('../src/uri.js');
 
 describe('uri lib', function() {
   it('should parse stringified and encoded props from location', function() {
-    location = 'mypage.com?name=Jack&info=%7B%22age%22%3A25%7D';
-    params = uri.parseLocation(location);
+    var uriLocation = 'mypage.com?name=Jack&info=%7B%22age%22%3A25%7D';
+    params = uri.parseLocation(uriLocation);
 
     expect(params.name).to.equal('Jack');
     expect(params.info.age).to.equal(25);
