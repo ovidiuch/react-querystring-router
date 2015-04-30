@@ -69,9 +69,9 @@ Router.prototype = {
       // possible for a component to change the page through the router and
       // not have to rely on any sort of globals
       router: this
-    }, this._options.defaultProps, _.omit(params, 'component'));
+    }, this._options.defaultProps, params);
 
-    var ComponentClass = this._options.getComponentClass(params.component),
+    var ComponentClass = this._options.getComponentClass(props),
         componentElement = React.createElement(ComponentClass, props);
 
     // The router exposes the instance of the currently rendered component
@@ -79,7 +79,7 @@ Router.prototype = {
                                       this._options.container);
 
     if (_.isFunction(this._options.onChange)) {
-      this._options.onChange.call(this, params);
+      this._options.onChange.call(this, props);
     }
   },
 

@@ -5,11 +5,12 @@ Bare router for React components, using query string as props.
 http://mysite.com/?component=Father&eyes=blue&mood=happy
 ```
 
-This route would render the Father component (see `getComponentClass` option),
+This route will render the component class returned by `getComponentClass`
 using the following props:
 
 ```js
 {
+  component: 'Father',
   eyes: 'blue',
   mood: 'happy'
 }
@@ -27,15 +28,15 @@ var myRouter = new Router({
     fries: true
   },
   // This is how the router maps component names to corresponding classes
-  getComponentClass: function(name) {
-    return require('components/' + name + '.jsx');
+  getComponentClass: function(props) {
+    return require('components/' + props.component + '.jsx');
   },
   // Tell React where to render in the DOM
   container: document.getElementById('content'),
   // Called whenever the route changes (also initially), receiving the parsed
-  // params as the first argument
-  onChange: function(params) {
-    // E.g. Use the params to set a custom document.title
+  // props as the first argument
+  onChange: function(props) {
+    // E.g. Use the props to set a custom document.title
   }
 });
 ```
