@@ -1,4 +1,4 @@
-# react-minimal-router [![Build Status](https://travis-ci.org/skidding/react-minimal-router.svg?branch=master)](https://travis-ci.org/skidding/react-minimal-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-minimal-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-minimal-router?branch=master)
+# react-querystring-router [![Build Status](https://travis-ci.org/skidding/react-querystring-router.svg?branch=master)](https://travis-ci.org/skidding/react-querystring-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-querystring-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-querystring-router?branch=master)
 Bare router for React components, using query string as props.
 
 ```
@@ -18,7 +18,7 @@ using the following props:
 #### Options
 
 ```js
-var Router = require('react-minimal-router').Router;
+var Router = require('react-querystring-router').Router;
 
 var myRouter = new Router({
   // These props will be sent to all components loaded, and will be overridden
@@ -46,7 +46,7 @@ the `router` prop.
 #### Changing the route
 
 ```jsx
-var stringifyParams = require('react-minimal-router').uri.stringifyParams;
+var stringifyParams = require('react-querystring-router').uri.stringifyParams;
 
 //...
 
