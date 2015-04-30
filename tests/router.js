@@ -34,9 +34,16 @@ describe('Router class', function() {
       expect(uri.parseLocation.lastCall.args[0]).to.equal(uriLocation);
     });
 
-    it('should call getComponentClass with name', function() {
-      expect(routerOptions.getComponentClass.lastCall.args[0])
-            .to.equal(uriParams.component);
+    it('should call getComponentClass with params', function() {
+      var propsSent = routerOptions.getComponentClass.lastCall.args[0];
+      expect(propsSent.component).to.equal(uriParams.component);
+      expect(propsSent.dataUrl).to.equal(uriParams.dataUrl);
+    });
+
+    it('should call getComponentClass with default props', function() {
+      var propsSent = routerOptions.getComponentClass.lastCall.args[0];
+      expect(propsSent.defaultProp)
+            .to.equal(routerOptions.defaultProps.defaultProp);
     });
 
     it('should call createElement with returned class', function() {
@@ -46,11 +53,6 @@ describe('Router class', function() {
     it('should render using URL params as props', function() {
       var propsSent = React.createElement.lastCall.args[1];
       expect(propsSent.dataUrl).to.equal(uriParams.dataUrl);
-    });
-
-    it('should omit component param in props', function() {
-      var propsSent = React.createElement.lastCall.args[1];
-      expect(propsSent.component).to.be.undefined;
     });
 
     it('should attach router reference to props', function() {
@@ -76,6 +78,12 @@ describe('Router class', function() {
       var params = routerOptions.onChange.lastCall.args[0];
       expect(params.component).to.equal(uriParams.component);
       expect(params.dataUrl).to.equal(uriParams.dataUrl);
+    });
+
+    it('should call onChange callback with default props', function() {
+      var params = routerOptions.onChange.lastCall.args[0];
+      expect(params.defaultProp)
+            .to.equal(routerOptions.defaultProps.defaultProp);
     });
   };
 

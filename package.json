@@ -1,11 +1,11 @@
 {
-  "name": "react-minimal-router",
-  "version": "0.1.3",
+  "name": "react-querystring-router",
+  "version": "0.2.0",
   "description": "Bare router for React components, using props as query string",
   "main": "src/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/skidding/react-minimal-router.git"
+    "url": "https://github.com/skidding/react-querystring-router.git"
   },
   "devDependencies": {
     "chai": "^2.2.0",

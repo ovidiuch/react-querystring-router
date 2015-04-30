@@ -1,15 +1,16 @@
-# react-minimal-router [![Build Status](https://travis-ci.org/skidding/react-minimal-router.svg?branch=master)](https://travis-ci.org/skidding/react-minimal-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-minimal-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-minimal-router?branch=master)
+# react-querystring-router [![Build Status](https://travis-ci.org/skidding/react-querystring-router.svg?branch=master)](https://travis-ci.org/skidding/react-querystring-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-querystring-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-querystring-router?branch=master)
 Bare router for React components, using query string as props.
 
 ```
 http://mysite.com/?component=Father&eyes=blue&mood=happy
 ```
 
-This route would render the Father component (see `getComponentClass` option),
+This route will render the component class returned by `getComponentClass`
 using the following props:
 
 ```js
 {
+  component: 'Father',
   eyes: 'blue',
   mood: 'happy'
 }
@@ -18,7 +19,7 @@ using the following props:
 #### Options
 
 ```js
-var Router = require('react-minimal-router').Router;
+var Router = require('react-querystring-router').Router;
 
 var myRouter = new Router({
   // These props will be sent to all components loaded, and will be overridden
@@ -27,15 +28,15 @@ var myRouter = new Router({
     fries: true
   },
   // This is how the router maps component names to corresponding classes
-  getComponentClass: function(name) {
-    return require('components/' + name + '.jsx');
+  getComponentClass: function(props) {
+    return require('components/' + props.component + '.jsx');
   },
   // Tell React where to render in the DOM
   container: document.getElementById('content'),
   // Called whenever the route changes (also initially), receiving the parsed
-  // params as the first argument
-  onChange: function(params) {
-    // E.g. Use the params to set a custom document.title
+  // props as the first argument
+  onChange: function(props) {
+    // E.g. Use the props to set a custom document.title
   }
 });
 ```
@@ -46,7 +47,7 @@ the `router` prop.
 #### Changing the route
 
 ```jsx
-var stringifyParams = require('react-minimal-router').uri.stringifyParams;
+var stringifyParams = require('react-querystring-router').uri.stringifyParams;
 
 //...
 
