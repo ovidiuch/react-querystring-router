@@ -1,7 +1,12 @@
 module.exports = {
   parseLocation: function(location) {
-    var queryString = location.split('?').pop(),
-        params = {};
+    var params = {};
+
+    if (location.indexOf('?') === -1) {
+      return params;
+    }
+
+    var queryString = location.split('?').pop();
 
     if (!queryString.length) {
       return params;
