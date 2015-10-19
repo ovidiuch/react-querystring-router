@@ -1,4 +1,5 @@
 var React = require('react'),
+    ReactDOM = require('react-dom'),
     _ = require('lodash'),
     uri = require('../src/uri.js'),
     Router = require('../src/router.js');
@@ -67,7 +68,7 @@ describe('Router class', function() {
     });
 
     it('should use container node received in options', function() {
-      expect(React.render.lastCall.args[1]).to.equal('<fake DOM element>');
+      expect(ReactDOM.render.lastCall.args[1]).to.equal('<fake DOM element>');
     });
 
     it('should expose reference to root component', function() {
@@ -115,7 +116,7 @@ describe('Router class', function() {
     });
 
     sinon.stub(React, 'createElement');
-    sinon.stub(React, 'render', function() {
+    sinon.stub(ReactDOM, 'render', function() {
       return componentInstance;
     });
 
@@ -145,7 +146,7 @@ describe('Router class', function() {
     uri.parseLocation.restore();
 
     React.createElement.restore();
-    React.render.restore();
+    ReactDOM.render.restore();
   });
 
   describe('initial location', function() {

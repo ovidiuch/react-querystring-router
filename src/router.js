@@ -1,4 +1,5 @@
 var React = require('react'),
+    ReactDOM = require('react-dom'),
     _ = require('lodash'),
     uri = require('./uri.js');
 
@@ -69,8 +70,8 @@ Router.prototype = {
         componentElement = React.createElement(ComponentClass, props);
 
     // The router exposes the instance of the currently rendered component
-    this.rootComponent = React.render(componentElement,
-                                      this._options.container);
+    this.rootComponent = ReactDOM.render(componentElement,
+                                         this._options.container);
 
     if (_.isFunction(this._options.onChange)) {
       this._options.onChange.call(this, props);
