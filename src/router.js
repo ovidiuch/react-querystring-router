@@ -38,12 +38,6 @@ Router.prototype = {
   },
 
   onPopState: function(e) {
-    // Chrome & Safari trigger an empty popState event initially, while
-    // Firefox doesn't, we choose to ignore that event altogether
-    if (!e.state) {
-      return;
-    }
-
     var location = this._getCurrentLocation(),
         params = uri.parseLocation(location);
 

@@ -186,10 +186,21 @@ describe('Router class', function() {
       genericTests();
     });
 
-    describe('.PopState event', function() {
+    describe('PopState event', function() {
       beforeEach(function() {
         routerInstance.onPopState({
           state: {}
+        });
+      });
+
+      currentLocationTests();
+      genericTests();
+    });
+
+    describe('Empty PopState event', function() {
+      beforeEach(function() {
+        routerInstance.onPopState({
+          state: null
         });
       });
 
