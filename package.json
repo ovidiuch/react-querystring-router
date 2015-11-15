@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/skidding/react-querystring-router.git"
   },
+  "license": "MIT",
   "devDependencies": {
     "chai": "^2.2.0",
     "coveralls": "^2.11.2",
