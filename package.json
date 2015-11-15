@@ -1,6 +1,6 @@
 {
   "name": "react-querystring-router",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Bare router for React components, using props as query string",
   "main": "src/main.js",
   "repository": {

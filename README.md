@@ -1,4 +1,9 @@
 # react-querystring-router [![Build Status](https://travis-ci.org/skidding/react-querystring-router.svg?branch=master)](https://travis-ci.org/skidding/react-querystring-router) [![Coverage Status](https://coveralls.io/repos/skidding/react-querystring-router/badge.svg?branch=master)](https://coveralls.io/r/skidding/react-querystring-router?branch=master)
+
+React compatibility:
+- `react-querystring-router@0.2` with `react@0.13` and below
+- `react-querystring-router@0.3` with `react@0.14` and above
+
 Bare router for React components, using query string as props.
 
 ```
