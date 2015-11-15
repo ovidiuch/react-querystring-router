@@ -47,7 +47,7 @@ Router.prototype = {
     var location = this._getCurrentLocation(),
         params = uri.parseLocation(location);
 
-    this._loadParams(params, location);
+    this._loadParams(params);
   },
 
   _pushLocation: function(location) {
