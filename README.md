@@ -2,7 +2,7 @@
 
 React compatibility:
 - `react-querystring-router@0.2` with `react@0.13` and below
-- `react-querystring-router@0.3` with `react@0.14` and above
+- `react-querystring-router@0.4` with `react@0.14` and above
 
 Bare router for React components, using query string as props.
 
